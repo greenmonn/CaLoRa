@@ -1,8 +1,9 @@
 # project settings
 cmake_minimum_required(VERSION 2.8.4)
+
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/cmake/ArduinoToolchain.cmake)
 set(PROJECT_NAME LoRa)
-
+project(${PROJECT_NAME})
 
 # generate RadioHead Library
 set(RH_PATH $ENV{HOME}/Documents/Arduino/libraries/RadioHead)
