@@ -6,7 +6,7 @@ set(PROJECT_NAME LoRa)
 project(${PROJECT_NAME})
 
 # generate RadioHead Library
-set(RH_PATH $ENV{HOME}/Documents/Arduino/libraries/RadioHead)
+set(RH_PATH ${CMAKE_SOURCE_DIR}/RadioHead)
 include_directories(${RH_PATH})
 file(GLOB RH_SRCS ${RH_PATH}/*.cpp)
 file(GLOB RH_HDRS ${RH_PATH}/*.h)
