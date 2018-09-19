@@ -21,7 +21,7 @@ set(${CMAKE_PROJECT_NAME}_BOARD uno)
 file(GLOB ARD_PORT /dev/cu.wchusbserial*)
 
 if(WIN32)
-    set(ARD_PORT COM6)
+    file(READ ${CMAKE_SOURCE_DIR}/WinSerialPort.txt ARD_PORT)
 endif()
 
 set(${CMAKE_PROJECT_NAME}_PORT ${ARD_PORT})
