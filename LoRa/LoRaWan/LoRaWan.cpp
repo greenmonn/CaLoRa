@@ -28,12 +28,13 @@ bool LoRaWan::init(float frequency) {
 	rf95.setCodingRate4(5);
 
 	Serial.print("Listening on frequency: ");
-	Serial.println(frequencㅌy);
+	Serial.println(frequency);
 
 	return true;
 }
 
-bool LoRaWan::setRecvCallback(recv_callback_t) {
+bool LoRaWan::setRecvCallback(recv_callback_t recv_callback) {
+//	LoRaWan::recv_callback = recv_callback;
 	return false;
 }
 
@@ -42,6 +43,11 @@ bool LoRaWan::requestSend(uint8_t *, int) {
 }
 
 void LoRaWan::oneLoop() {
+
+	// on receiving packet
+	// 	process packet
+//	LoRaWan::recv_callback((uint8_t *) "message contents", 20);
+
 //	if (rf95.available())
 //	{
 //		// Should be a message for us now

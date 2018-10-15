@@ -1,5 +1,4 @@
-#include <LoRaWan/LoRaWan.h>
-#include <time.h>
+#include "LoRaWan.h"
 
 #define SERIAL_BAUDRATE 9600
 #define RF_FREQUENCY 868.0
@@ -28,13 +27,17 @@ void loop()
 	char payload[] = "test string";
 	bool haveSomethingToSend = true;
 
-	/* application stuff */
-	// haveSomethingToSend = getSensorData();
+	/* application stuff
+	 * ex)
+	 * 	haveSomethingToSend = getSensorData();
+	 * 	if (haveSomethingToSend)
+	 * 	LoRaWan::requestSend((uint8_t*)payload, sizeof(payload));
+	 */
 
-	if (haveSomethingToSend)
-		LoRaWan::requestSend((uint8_t*)payload, sizeof(payload));
+	void (* a)(uint8_t*, int);
+	a = recv_callback;
 
-
+	a((uint8_t*)payload, sizeof(payload));
 
 	// LoRa loop
 	LoRaWan::oneLoop();

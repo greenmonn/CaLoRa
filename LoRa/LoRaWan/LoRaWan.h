@@ -6,7 +6,8 @@
  */
 
 #include <SPI.h>
-#include <RH_RF95.h>
+
+#include "RH_RF95.h"
 #include "LoRaClass.h"
 
 // types
@@ -19,6 +20,7 @@ private:
 		static RH_RF95 rf95;
 		static bool receiving;
 		static LoRaClass currentClass;
+//		static recv_callback_t recv_callback;
 
 		static int getNextDataRate(/* rssi */);
 
@@ -28,7 +30,6 @@ private:
 		// hidden constructor
 		LoRaWan();
 
-
 public:
 		// class related methods
 		static LoRaClass getCurrentClass();
@@ -36,7 +37,7 @@ public:
 
 		// application interface
 		static bool init(float frequency);
-		static bool setRecvCallback(recv_callback_t);
+		static bool setRecvCallback(recv_callback_t recv_callback);
 		static bool requestSend(uint8_t*, int);
 		static void oneLoop();
 };
