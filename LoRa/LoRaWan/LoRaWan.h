@@ -1,34 +1,34 @@
 #ifndef LORA_LORAMAC_H
 #define LORA_LORAMAC_H
 
-/*
- * static class LoRaWan mac layer implementation
- */
-
 #include <SPI.h>
 
 #include "RH_RF95.h"
 #include "LoRaClass.h"
+#include "SendQueue.h"
 
-// types
-typedef void(*recv_callback_t)(uint8_t*, int);
 
-// This class is meant to be used as static class
+/*
+ * LoRaWan:
+ * 	LoRaWan(mac layer) implementation
+ */
+
 class LoRaWan {
 
 private:
-		static RH_RF95 rf95;
-		static bool receiving;
-		static LoRaClass currentClass;
-//		static recv_callback_t recv_callback;
+		static RH_RF95 rf95;									// radio driver
+		static LoRaClass currentClass;				// current lora class - not used for now
+		static SendQueue sendQueue;
 
-		static int getNextDataRate(/* rssi */);
+		// ADR(adaptive data rate). get next data rate from existing radio state
+		static int getNextDataRate();
 
-		// LoRa primitive methods
-		static bool send();
+
 
 		// hidden constructor
 		LoRaWan();
+
+		typedef void(*recv_callback_t)(uint8_t*, int);
 
 public:
 		// class related methods
@@ -37,10 +37,11 @@ public:
 
 		// application interface
 		static bool init(float frequency);
-		static bool setRecvCallback(recv_callback_t recv_callback);
+		static bool setRecvCallback(recv_callback_t recvCallback);
 		static bool requestSend(uint8_t*, int);
+
+		// main lorawan loop
 		static void oneLoop();
 };
-
 
 #endif //LORA_LORAMAC_H

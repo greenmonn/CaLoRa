@@ -1,6 +1,12 @@
 #ifndef LORA_FRAMER_H
 #define LORA_FRAMER_H
 
+
+/*
+ * Framer:
+ * 	- responsible for header creation and parsing
+ */
+
 #include <stdint.h>
 
 typedef struct{
@@ -10,8 +16,12 @@ typedef struct{
 class Framer {
 
 public:
-		void create(uint8_t* pHdr, LoRaHeader header);
-		LoRaHeader parse(uint8_t* hdr);
+
+		// insert lora headers fields for outgoing packet
+		void create(uint8_t* pPacket, LoRaHeader loRaHeader);
+
+		// parse lora headers fields for incoming packet
+		LoRaHeader parse(uint8_t * pPacket);
 
 };
 

@@ -5,23 +5,24 @@ set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/cmake/ArduinoToolchain.cmake)
 set(PROJECT_NAME LoRa)
 project(${PROJECT_NAME})
 
+set(LORAWAN_PATH ${CMAKE_SOURCE_DIR}/LoRaWan)
+
+#===========================================#
+#  generate RadioHead Lib                   #
+#===========================================#
+set(RH_PATH ${LORAWAN_PATH}/RadioHead)
+include_directories(${RH_PATH})
+file(GLOB RH_HDRS ${RH_PATH}/*.h)
+file(GLOB RH_SRCS ${RH_PATH}/*.cpp)
+generate_arduino_library(RadioHead SRCS ${RH_SRCS} HDRS ${RH_HDRS})
+
 #===========================================#
 #  generate LoRaWan Lib                     #
 #===========================================#
-set(LORAWAN_PATH ${CMAKE_SOURCE_DIR}/LoRaWan)
-set(RH_PATH ${LORAWAN_PATH}/RadioHead)
 include_directories(${LORAWAN_PATH})
-include_directories(${RH_PATH})
-
-file(GLOB LORAWAN_SRCS ${LORAWAN_PATH}/*.cpp)
 file(GLOB LORAWAN_HDRS ${LORAWAN_PATH}/*.h)
-file(GLOB RH_SRCS ${RH_PATH}/*.cpp)
-file(GLOB RH_SRCS ${RH_PATH}/*.cpp)
-
-generate_arduino_library(
-        LoRaWan
-        SRCS ${LORAWAN_SRCS} ${RH_SRCS}
-        HDRS ${LORAWAN_HDRS} ${RH_HDRS})
+file(GLOB LORAWAN_SRCS ${LORAWAN_PATH}/*.cpp)
+generate_arduino_library(LoRaWan SRCS ${LORAWAN_SRCS} HDRS ${RH_HDRS} LIBS RadioHead)
 
 #===========================================#
 #  generate arduino firmware                #

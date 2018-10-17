@@ -2,7 +2,13 @@
 #define LORA_LORAMACCLASSCONTROLLER_H
 
 
-class LoRaMacClassController {
+/*
+ * ClassController:
+ * 	- general controller for "Adaptive Class"
+ * 	- manage switching classes
+ */
+
+class ClassController {
 
 };
 

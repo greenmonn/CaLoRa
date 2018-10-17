@@ -3,6 +3,11 @@
 #define LORA_LORAMACCOMMAND_H
 
 
+/*
+ * MacCommand:
+ * 	- provide abstraction on mac command
+ */
+
 class LoRaMacCommand {
 
 };

@@ -14,7 +14,9 @@ void setup()
 	while (!Serial) ; // Wait for serial port to be available
 	Serial.println("Start Sketch");
 
-	LoRaWan::init(RF_FREQUENCY);
+	if(!LoRaWan::init(RF_FREQUENCY))
+		Serial.println("init failed");
+
 	LoRaWan::setRecvCallback(recv_callback);
 }
 
@@ -25,19 +27,13 @@ void setup()
 void loop()
 {
 	char payload[] = "test string";
-	bool haveSomethingToSend = true;
 
 	/* application stuff
 	 * ex)
 	 * 	haveSomethingToSend = getSensorData();
 	 * 	if (haveSomethingToSend)
-	 * 	LoRaWan::requestSend((uint8_t*)payload, sizeof(payload));
+	 * 		LoRaWan::requestSend((uint8_t*)payload, sizeof(payload));
 	 */
-
-	void (* a)(uint8_t*, int);
-	a = recv_callback;
-
-	a((uint8_t*)payload, sizeof(payload));
 
 	// LoRa loop
 	LoRaWan::oneLoop();

@@ -2,8 +2,12 @@
 #define LORA_LORACLASS_H
 
 
-class LoRaClass {
+/*
+ * LoRaClass:
+ *  - abstract class for class specific behaviors
+ */
 
+class LoRaClass {
 };
 
 

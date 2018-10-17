@@ -1,11 +1,10 @@
 #include "LoRaWan.h"
 
 RH_RF95 LoRaWan::rf95;
-bool LoRaWan::receiving;
 LoRaClass LoRaWan::currentClass;
+SendQueue LoRaWan::sendQueue;
 
 LoRaWan::LoRaWan() {
-	receiving = false;
 }
 
 LoRaClass LoRaWan::getCurrentClass() {
@@ -13,13 +12,12 @@ LoRaClass LoRaWan::getCurrentClass() {
 }
 
 void LoRaWan::changeClass(LoRaClass) {
-
 }
 
 bool LoRaWan::init(float frequency) {
 
 	if (!rf95.init())
-		Serial.println("rf95 init failed");
+		return false;
 
 	rf95.setFrequency(frequency);
 	rf95.setTxPower(13);
@@ -27,19 +25,15 @@ bool LoRaWan::init(float frequency) {
 	rf95.setSignalBandwidth(125000);
 	rf95.setCodingRate4(5);
 
-	Serial.print("Listening on frequency: ");
-	Serial.println(frequency);
-
 	return true;
 }
 
 bool LoRaWan::setRecvCallback(recv_callback_t recv_callback) {
-//	LoRaWan::recv_callback = recv_callback;
 	return false;
 }
 
-bool LoRaWan::requestSend(uint8_t *, int) {
-	return false;
+bool LoRaWan::requestSend(uint8_t* pPayload, int length) {
+	return sendQueue.push(pPayload, length);
 }
 
 void LoRaWan::oneLoop() {
@@ -73,4 +67,8 @@ void LoRaWan::oneLoop() {
 //			Serial.println("recv failed");
 //		}
 //	}
+}
+
+int LoRaWan::getNextDataRate() {
+	return 0;
 }
