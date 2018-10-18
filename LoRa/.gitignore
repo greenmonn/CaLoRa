@@ -43,6 +43,7 @@
 .idea/**/dictionaries
 .idea/**/shelf
 .idea/**/vcs.xml
+.idea/**/misc.xml
 
 # Device-dependent IDE setting
 .idea/**/serialmonitor_settings.xml
