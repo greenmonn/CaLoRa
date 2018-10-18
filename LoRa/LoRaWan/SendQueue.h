@@ -22,8 +22,8 @@ private:
 
 public:
 
-		bool push(uint8_t *message, int length);			// push app message to queue
-		bool pop(uint8_t *message, int* length);			// pop next app message
+		bool push(uint8_t *message, uint8_t length);			// push app message to queue
+		bool pop(uint8_t *message, uint8_t *length);			// pop next app message
 		int length();
 };
 
