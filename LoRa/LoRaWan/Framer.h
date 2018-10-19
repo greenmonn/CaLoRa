@@ -21,7 +21,7 @@ public:
 		void create(uint8_t *pPacket, uint8_t *length, LoRaHeader loRaHeader);
 
 		// parse lora headers fields for incoming packet
-		LoRaHeader parse(uint8_t * pPacket);
+		LoRaHeader parse(uint8_t *pPacket, uint8_t *length);
 
 };
 

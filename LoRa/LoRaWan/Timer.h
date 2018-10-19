@@ -3,6 +3,8 @@
 
 // TODO: implement timer class, schedule, update methods
 
+typedef void (*timer_callback_t)();
+
 class Timer {
 
 private:
@@ -11,7 +13,7 @@ private:
 
 public:
 
-		void schedule(long after, void (*callback)(), unsigned long start=0, unsigned long every=0);
+		void schedule(long after, timer_callback_t timerCallback, unsigned long start=0, unsigned long every=0);
 		void update();
 };
 
