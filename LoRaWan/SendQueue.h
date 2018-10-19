@@ -2,7 +2,7 @@
 #define LORA_SENDQUEUE_H
 
 #include <stdint.h>
-
+#include "List.h"
 
 /*
  * SendQueue:
@@ -12,19 +12,29 @@
 class SendQueue {
 
 private:
-		typedef struct _Elem{
-				uint8_t * message;
-				struct _Elem* next;
-		} Elem;
+    class Message {
+    public:
+        uint8_t length;
+        uint8_t *data;
 
-		Elem* head;
-		int len;
+        Message(uint8_t *_data, uint8_t _length) {
+            length = _length;
+            data = _data;
+        }
+
+        bool operator==(const Message &message) const {
+            return (data == message.data) && (length == message.length);
+        }
+    };
+
+    List<Message> queue;
 
 public:
+    bool push(uint8_t *message, uint8_t length);
 
-		bool push(uint8_t *message, uint8_t length);			// push app message to queue
-		bool pop(uint8_t *message, uint8_t *length);			// pop next app message
-		int length();
+    bool pop(uint8_t *message, uint8_t *length);
+
+    int length();
 };
 
 
