@@ -1,10 +1,10 @@
 #include "SendQueue.h"
 
-bool SendQueue::push(uint8_t *message, int length) {
+bool SendQueue::push(uint8_t *message, uint8_t length) {
 	return false;
 }
 
-bool SendQueue::pop(uint8_t *message, int *length) {
+bool SendQueue::pop(uint8_t *message, uint8_t *length) {
 	return false;
 }
 

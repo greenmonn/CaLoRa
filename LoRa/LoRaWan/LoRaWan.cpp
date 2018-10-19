@@ -1,72 +1,116 @@
 #include "LoRaWan.h"
 
-RH_RF95 LoRaWan::rf95;
-LoRaClass LoRaWan::currentClass;
-SendQueue LoRaWan::sendQueue;
+LoRaWan* LoRaWan::instance;
 
-LoRaWan::LoRaWan() {
+LoRaWan::LoRaWan() : sendQueue(), packetBuffer(), length() {
+	transmitting = false;
 }
 
 LoRaClass LoRaWan::getCurrentClass() {
 	return currentClass;
 }
 
-void LoRaWan::changeClass(LoRaClass) {
+void LoRaWan::changeClass(LoRaClass loRaClass) {
+	currentClass = loRaClass;
 }
 
-bool LoRaWan::init(float frequency) {
+bool LoRaWan::init(recv_callback_t recvCallback) {
 
-	if (!rf95.init())
+	if (!radioDriver.init())
 		return false;
 
-	rf95.setFrequency(frequency);
-	rf95.setTxPower(13);
-	rf95.setSpreadingFactor(7);
-	rf95.setSignalBandwidth(125000);
-	rf95.setCodingRate4(5);
-
+	radioDriver.setFrequency(FREQUENCY);
+	radioDriver.setTxPower(13);
+	radioDriver.setSpreadingFactor(7);
+	radioDriver.setSignalBandwidth(125000);
+	radioDriver.setCodingRate4(5);
+	this->recvCallback = recvCallback;
 	return true;
 }
 
-bool LoRaWan::setRecvCallback(recv_callback_t recv_callback) {
-	return false;
-}
-
-bool LoRaWan::requestSend(uint8_t* pPayload, int length) {
+bool LoRaWan::requestSend(uint8_t *pPayload, uint8_t length) {
 	return sendQueue.push(pPayload, length);
 }
 
 void LoRaWan::oneLoop() {
 
-	// on receiving packet
-	// 	process packet
-//	LoRaWan::recv_callback((uint8_t *) "message contents", 20);
+	switch (radioDriver.mode()) {
 
-//	if (rf95.available())
-//	{
-//		// Should be a message for us now
-//		uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-//		uint8_t len = sizeof(buf);
-//		if (rf95.recv(buf, &len))
-//		{
-//			RH_RF95::printBuffer("request: ", buf, len);
-//			Serial.print("got request: ");
-//			Serial.println((char*)buf);
-//			Serial.print("RSSI: ");
-//			Serial.println(rf95.lastRssi(), DEC);
-//
-//			// Send a reply
-//			uint8_t data[] = "And hello back to you";
-//			rf95.send(data, sizeof(data));
-//			rf95.waitPacketSent();
-//			Serial.println("Sent a reply");
-//			digitalWrite(led, LOW);
-//		}
-//		else
-//		{
-//			Serial.println("recv failed");
-//		}
-//	}
+		// in case radio in sleep
+		case RHGenericDriver::RHModeSleep:
+
+			// check if there are messages from upper(app) layer
+			if (sendQueue.pop(packetBuffer, &length)) {
+
+				// TODO: properly set lora header
+
+				framer.create(packetBuffer, &length, loRaHeader);
+				radioDriver.send(packetBuffer, length);
+				transmitting = true;
+			}
+			break;
+
+		// in case radio receiving (receive window opened)
+		case RHGenericDriver::RHModeRx:
+
+			// get received packet
+			if (radioDriver.available()) {
+				if (radioDriver.recv(packetBuffer, &length)) {
+
+					loRaHeader = framer.parse(packetBuffer, &length);
+					// TODO: process received header
+
+					recvCallback(packetBuffer, length);
+				}
+			}
+			break;
+
+		// in case radio idle
+		case RHGenericDriver::RHModeIdle:
+
+			// tx -> idle, which means transmission is finished
+			if (transmitting) {
+
+				transmitting = false;
+
+				// schedule first, second receive window
+				timer.schedule(RECEIVE_DELAY1, beginReceiveWindow1);
+				timer.schedule(RECEIVE_DELAY2, beginReceiveWindow2);
+			}
+
+			break;
+
+		// in case radio transmitting, keep transmit
+		case RHGenericDriver::RHModeTx: break;
+
+		// unused cases
+		case RHGenericDriver::RHModeInitialising: break;
+		case RHGenericDriver::RHModeCad: break;
+	}
+
+	timer.update();
+}
+
+void LoRaWan::beginReceiveWindow1() {
+	// open receive window for RECEIVE_DURATION
+	instance->radioDriver.setModeRx();
+	instance->timer.schedule(RECEIVE_DURATION, endReceiveWindow1);
+}
+
+void LoRaWan::endReceiveWindow1() {
+	// close receive window go to idle
+	instance->radioDriver.setModeIdle();
+}
+
+void LoRaWan::beginReceiveWindow2() {
+	// open receive window for RECEIVE_DURATION
+	instance->radioDriver.setModeRx();
+	instance->timer.schedule(RECEIVE_DURATION, endReceiveWindow2);
+}
+
+void LoRaWan::endReceiveWindow2() {
+	// close receive window go to sleep
+	instance->radioDriver.sleep();
 }
 
 int LoRaWan::getNextDataRate() {
