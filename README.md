@@ -1,4 +1,6 @@
 # AgIoT
+[![Build Status](https://travis-ci.org/greenmonn/AgIoT.svg?branch=master)](https://travis-ci.org/greenmonn/AgIoT)
+
 K-SW Square Purdue Project 4
 
 # Environment Setting
