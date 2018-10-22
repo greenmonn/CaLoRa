@@ -15,6 +15,8 @@ TEST_CASE("Add Item to List", "[List]") {
     REQUIRE(*list.GetFirst() == 1);
     REQUIRE(*list.GetLast() == 2);
 
+    REQUIRE(list.GetFirst() != &item1);
+
     REQUIRE(list.Length() == 2);
 }
 

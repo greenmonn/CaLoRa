@@ -16,10 +16,13 @@ private:
         struct _Item *next;
 
         _Item(T *_data) : prev(NULL), next(NULL) {
-            data = _data;
+            data = (T*)malloc(sizeof(T));
+            memcpy(data, _data, sizeof(T));
         }
 
     } Item;
+
+    int length;
 
     Item *first;
 
@@ -46,6 +49,7 @@ template <class T>
 List<T>::List() {
     this->first = NULL;
     this->last = NULL;
+    this->length = 0;
 }
 
 template <class T>
@@ -68,16 +72,7 @@ T *List<T>::GetLast() {
 
 template <class T>
 int List<T>::Length() {
-    int itemCount = 0;
-
-    Item *item = this->first;
-
-    while (item != NULL) {
-        itemCount++;
-        item = item->next;
-    }
-
-    return itemCount;
+    return this->length;
 }
 
 template <class T>
@@ -89,12 +84,16 @@ void List<T>::Add(T *data) {
         this->first = newItem;
         this->last = newItem;
 
+        this->length++;
+
         return;
     }
 
     newItem->prev = this->last;
     this->last->next = newItem;
     this->last = newItem;
+
+    this->length++;
 }
 
 template <class T>
@@ -115,6 +114,8 @@ void List<T>::Remove(T *data) {
     }
 
     delete item;
+
+    this->length--;
 }
 
 template <class T>
