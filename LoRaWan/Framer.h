@@ -9,19 +9,27 @@
 
 #include <stdint.h>
 
-typedef struct{
+typedef struct {
 
-}LoRaHeader;
+	uint8_t value;
+
+	struct MHDR_bits {
+		uint8_t Major:2;
+		uint8_t RUF:3;
+		uint8_t MType:3;
+	} bits;
+
+} LoraMacHeader;
 
 class Framer {
 
 public:
 
 		// insert lora headers fields for outgoing packet
-		void create(uint8_t *pPacket, uint8_t *length, LoRaHeader loRaHeader);
+		void create(uint8_t* pPacket, LoraMacHeader loRaHeader);
 
 		// parse lora headers fields for incoming packet
-		LoRaHeader parse(uint8_t *pPacket, uint8_t *length);
+		LoraMacHeader parse(uint8_t * pPacket);
 
 };
 

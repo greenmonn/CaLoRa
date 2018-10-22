@@ -1,9 +1,13 @@
 #include "Framer.h"
 
-void Framer::create(uint8_t *pPacket, uint8_t *length, LoRaHeader loRaHeader) {
+void Framer::create(uint8_t *pPacket, LoraMacHeader loRaHeader) {
 
 }
 
-LoRaHeader Framer::parse(uint8_t *pPacket, uint8_t *length) {
-	return LoRaHeader();
+LoraMacHeader Framer::parse(uint8_t *pPacket) {
+
+    LoraMacHeader mhdr;
+//    mhdr.value = value;
+
+    return mhdr;
 }
