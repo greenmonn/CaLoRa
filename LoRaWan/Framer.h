@@ -73,11 +73,11 @@ typedef struct{
 class Framer {
 
 public:
-    void create(uint8_t* pPacket, LoraMacHeader *MHDR,FrameHeader *FHDR,uint8_t *FPort,
+    bool create(uint8_t *pPacket, LoraMacHeader *MHDR,FrameHeader *FHDR,uint8_t *FPort,
                 uint8_t *length);
     // parse lora headers fields for incoming packet
-    uint8_t parse(uint8_t *pPacket , LoraMacHeader *MHDR , FrameHeader *FHDR , uint8_t *FPort ,
-                 uint8_t *FRMPayload,uint8_t *Packet_length);
+    bool parse(uint8_t *pPacket , LoraMacHeader *MHDR , FrameHeader *FHDR , uint8_t *FPort ,
+                 uint8_t *Packet_length);
     uint32_t MakeMIC(uint8_t* pPacket);
     bool checkMIC(uint8_t* pPacket,uint8_t Packet_length);
 };

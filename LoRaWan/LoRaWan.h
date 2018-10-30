@@ -15,8 +15,8 @@
  * 	- LoRaWan(mac layer) singleton implementation
  */
 
-#define FREQUENCY							868.0
-#define MAX_PHY_PAYLOAD 			247
+#define FREQUENCY					868.0
+#define MAX_PHY_PAYLOAD             247
 #define MAX_FRM_PAYLOAD             239
 
 /*

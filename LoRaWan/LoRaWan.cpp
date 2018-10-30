@@ -59,7 +59,6 @@ void LoRaWan::oneLoop() {
 
 					length=framer.parse(packetBuffer,&MHDR,&FHDR,&FPort,FRMPayLoad,&length);//return FRMlength
 					// TODO: process received header
-
 					recvCallback(packetBuffer, length);
 				}
 			}
