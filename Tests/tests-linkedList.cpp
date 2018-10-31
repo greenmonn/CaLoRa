@@ -33,3 +33,24 @@ TEST_CASE("Remove Item from List", "[List]") {
     REQUIRE(list.Length() == 0);
 
 }
+
+TEST_CASE("Iterate from beginning to end", "[List]") {
+    List<uint8_t> list = List<uint8_t>();
+
+    uint8_t items[5] = {1, 2, 3, 4, 5};
+
+    for (uint8_t item : items) {
+        list.Add(&item);
+    }
+
+    List<uint8_t>::iterator iter = list.Begin();
+
+    int i = 0;
+    while (iter != list.End()) {
+        REQUIRE(*iter.Data() == items[i++]);
+
+        iter++;
+    }
+
+    REQUIRE(i == 5);
+}

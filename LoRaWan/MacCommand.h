@@ -14,6 +14,9 @@
  * 	- provide abstraction on mac command
  */
 
+#define LORA_MAC_COMMAND_MAX_FOPTS_LENGTH           15
+
+
 typedef enum enumLoRaMacCommandsStatus {
     /*!
      * No error occurred
@@ -42,48 +45,44 @@ typedef enum enumLoRaMacCommandsStatus {
 } LoRaMacCommandStatus;
 
 class MacCommand {
+public:
+    MacCommand(uint8_t commandID, uint8_t *payload, size_t payloadSize) {
+        this->CommandID = commandID;
+        this->PayloadSize = payloadSize;
+        memcpy(this->Payload, payload, payloadSize);
+    }
+
+    bool operator==(const MacCommand& macCommand) {
+        return (this->CommandID == macCommand.CommandID
+        && this->Payload == macCommand.Payload
+        && this->PayloadSize == macCommand.PayloadSize);
+    }
+
     uint8_t CommandID;
     uint8_t Payload[LORAMAC_COMMADS_MAX_NUM_OF_PARAMS];
     size_t PayloadSize;
 };
 
-class MacCommandsList : private List<MacCommand> {
-    LoRaMacCommandStatus AddCommand(uint8_t commandID, uint8_t* payload, size_t payloadSize);
-    LoRaMacCommandStatus RemoveCommand(MacCommand *macCommand);
-};
-
 class MacCommandsContext {
-    MacCommandsList macCommandsList;
+    List<MacCommand> macCommandsList;
 
     size_t serializedCommandsSize;
 
+    LoRaMacCommandStatus serialize(size_t availableSize, uint8_t *buffer);
+
+
 public:
-    bool AddMacCommandsToFrame(uint8_t *payload);
+    LoRaMacCommandStatus AddCommand(uint8_t commandID, uint8_t *payload, size_t payloadSize);
+
+    LoRaMacCommandStatus RemoveCommand(MacCommand *macCommand);
+
+    bool InsertToFrame(
+            uint8_t *fOpts,
+            size_t *fOptsLen,
+            uint8_t *FRMPayload,
+            size_t *FRMPayloadSize,
+            uint8_t appDataSize,
+            uint8_t availableAppPayloadSize);
 };
-
-/* Add or Remove a mac command to be sent */
-LoRaMacCommandStatus MacCommandsList::AddCommand(uint8_t commandID, uint8_t* payload, size_t payloadSize) {
-
-    // increase serializedCommandsSize
-    return LORAMAC_COMMANDS_SUCCESS;
-}
-
-LoRaMacCommandStatus MacCommandsList::RemoveCommand(MacCommand *macCommand) {
-
-    // decrease serializedCommandsSize
-    return LORAMAC_COMMANDS_SUCCESS;
-};
-
-/* Creating Mac Commands Payload by Mac Commands List */
-bool MacCommandsContext::AddMacCommandsToFrame(uint8_t *payload) {
-    // Refer Reference Code: `PrepareFrame` in LoRaMac.c
-}
-
-/* Processing Mac Commands */
-bool ProcessMacCommands(uint8_t *payload, uint8_t macIndex, uint8_t commandsSize) {
-    // Refer Reference Code: `ProcessMacCommands` in LoRaMac.c
-}
-
-/* Save or Restore Context */
 
 #endif //LORA_LORAMACCOMMAND_H
