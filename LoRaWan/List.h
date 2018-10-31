@@ -8,7 +8,7 @@
 
 using namespace std;
 
-template <class T>
+template<class T>
 class List {
 private:
     typedef struct _Item {
@@ -17,7 +17,7 @@ private:
         struct _Item *next;
 
         _Item(T *_data) : prev(NULL), next(NULL) {
-            data = (T*)malloc(sizeof(T));
+            data = (T *) malloc(sizeof(T));
             memcpy(data, _data, sizeof(T));
         }
 
@@ -43,17 +43,59 @@ public:
     T *GetFirst();
 
     T *GetLast();
+
+    class iterator {
+    private:
+        Item *item;
+
+    public:
+        iterator(Item *_item) {
+            this->item = _item;
+        }
+
+        iterator operator++(int) {
+            this->item = this->item->next;
+
+            return *this;
+        }
+
+        bool operator==(const iterator &iter) const {
+            return (item == iter.item);
+        }
+
+        bool operator!=(const iterator &iter) const {
+            return (item != iter.item);
+        }
+
+        T *Data() {
+            return this->item->data;
+        }
+    };
+
+    iterator Begin();
+
+    iterator End();
 };
 
+template<class T>
+typename List<T>::iterator List<T>::Begin() {
+    return iterator(first);
+}
 
-template <class T>
+template<class T>
+typename List<T>::iterator List<T>::End() {
+    return iterator(NULL);
+}
+
+
+template<class T>
 List<T>::List() {
     this->first = NULL;
     this->last = NULL;
     this->length = 0;
 }
 
-template <class T>
+template<class T>
 T *List<T>::GetFirst() {
     if (this->first == NULL) {
         return NULL;
@@ -62,7 +104,7 @@ T *List<T>::GetFirst() {
     return this->first->data;
 }
 
-template <class T>
+template<class T>
 T *List<T>::GetLast() {
     if (this->first == NULL) {
         return NULL;
@@ -71,12 +113,12 @@ T *List<T>::GetLast() {
     return this->last->data;
 }
 
-template <class T>
+template<class T>
 int List<T>::Length() {
     return this->length;
 }
 
-template <class T>
+template<class T>
 void List<T>::Add(T *data) {
     Item *newItem = (Item *) malloc(sizeof(Item));
     *newItem = Item(data);
@@ -97,7 +139,7 @@ void List<T>::Add(T *data) {
     this->length++;
 }
 
-template <class T>
+template<class T>
 void List<T>::Remove(T *data) {
     Item *item = this->find(data);
 
@@ -119,7 +161,7 @@ void List<T>::Remove(T *data) {
     this->length--;
 }
 
-template <class T>
+template<class T>
 typename List<T>::Item *List<T>::find(T *data) {
     Item *item = this->first;
 

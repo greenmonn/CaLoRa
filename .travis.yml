@@ -25,12 +25,10 @@ install:
 
   - cd ${TRAVIS_BUILD_DIR}
 
-before_script:
+script:
   - cmake .
-  - make .
+  - make
   - cd Tests
   - cmake .
-
-script:
   - make
   - ./catch_test
