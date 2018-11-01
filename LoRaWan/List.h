@@ -6,87 +6,96 @@
 #include <stdlib.h>
 #include <string.h>
 
-using namespace std;
-
 template<class T>
 class List {
 private:
+    int length;
+
     typedef struct _Item {
-        T *data;
+        T data;
         struct _Item *prev;
         struct _Item *next;
 
-        _Item(T *_data) : prev(NULL), next(NULL) {
-            data = (T *) malloc(sizeof(T));
-            memcpy(data, _data, sizeof(T));
+        _Item(const T &_data) : prev(NULL), next(NULL), data(_data) {
         }
-
     } Item;
-
-    int length;
 
     Item *first;
 
     Item *last;
 
-    Item *find(T *data);
+    Item *removeItem(Item *item);
+
+    Item *insertItem(T& data, Item *pos);
 
 public:
     List();
 
     int Length();
 
-    void Add(T *data);
-
-    void Remove(T *data);
-
-    T *GetFirst();
-
-    T *GetLast();
-
-    class iterator {
+    class Iterator {
+        friend class List;
     private:
         Item *item;
-
     public:
-        iterator(Item *_item) {
+
+        Iterator(Item *_item) {
             this->item = _item;
         }
 
-        iterator operator++(int) {
+        Iterator operator++() {
             this->item = this->item->next;
 
             return *this;
         }
 
-        bool operator==(const iterator &iter) const {
+        Iterator operator++(int) {
+            this->item = this->item->next;
+
+            return *this;
+        }
+
+        bool operator==(const Iterator &iter) const {
             return (item == iter.item);
         }
 
-        bool operator!=(const iterator &iter) const {
+        bool operator!=(const Iterator &iter) const {
             return (item != iter.item);
         }
 
-        T *Data() {
+        T& operator*() {
             return this->item->data;
         }
     };
 
-    iterator Begin();
+    Iterator Begin();
 
-    iterator End();
+    Iterator End();
+
+    Iterator Erase(const Iterator &iter);
+
+    Iterator Insert(const Iterator &iter, T &data);
 };
 
 template<class T>
-typename List<T>::iterator List<T>::Begin() {
-    return iterator(first);
+typename List<T>::Iterator List<T>::Begin() {
+    return Iterator(first);
 }
 
 template<class T>
-typename List<T>::iterator List<T>::End() {
-    return iterator(NULL);
+typename List<T>::Iterator List<T>::End() {
+    return Iterator(NULL);
 }
 
+template<class T>
+typename List<T>::Iterator List<T>::Erase(const List<T>::Iterator &iter) {
+    return Iterator(removeItem(iter.item));
+}
+
+template<class T>
+typename List<T>::Iterator List<T>::Insert(const List<T>::Iterator &iter, T& data) {
+    return Iterator(insertItem(data, iter.item));
+}
 
 template<class T>
 List<T>::List() {
@@ -96,52 +105,13 @@ List<T>::List() {
 }
 
 template<class T>
-T *List<T>::GetFirst() {
-    if (this->first == NULL) {
-        return NULL;
-    }
-
-    return this->first->data;
-}
-
-template<class T>
-T *List<T>::GetLast() {
-    if (this->first == NULL) {
-        return NULL;
-    }
-
-    return this->last->data;
-}
-
-template<class T>
 int List<T>::Length() {
     return this->length;
 }
 
 template<class T>
-void List<T>::Add(T *data) {
-    Item *newItem = (Item *) malloc(sizeof(Item));
-    *newItem = Item(data);
-
-    if (this->last == NULL) {
-        this->first = newItem;
-        this->last = newItem;
-
-        this->length++;
-
-        return;
-    }
-
-    newItem->prev = this->last;
-    this->last->next = newItem;
-    this->last = newItem;
-
-    this->length++;
-}
-
-template<class T>
-void List<T>::Remove(T *data) {
-    Item *item = this->find(data);
+typename List<T>::Item *List<T>::removeItem(Item *item) {
+    List<T>::Item *nextItem = item->next;
 
     if (item->prev == NULL) {
         this->first = item->next;
@@ -159,21 +129,37 @@ void List<T>::Remove(T *data) {
     delete item;
 
     this->length--;
+
+    return nextItem;
 }
 
 template<class T>
-typename List<T>::Item *List<T>::find(T *data) {
-    Item *item = this->first;
+typename List<T>::Item *List<T>::insertItem(T& data, Item *pos) {
+    Item *newItem = new Item(data);
 
-    while (item != NULL) {
-        if (*(item->data) == *data) {
-            return item;
-        }
+    Item *prevPos;
 
-        item = item->next;
+    if (pos == NULL) {
+        prevPos = this->last;
+        this->last = newItem;
+    } else {
+        prevPos = pos->prev;
+        pos->prev = newItem;
     }
 
-    return NULL;
+    newItem->next = pos;
+    newItem->prev = prevPos;
+
+    if (prevPos == NULL) {
+        this->first = newItem;
+    } else {
+        prevPos->next = newItem;
+    }
+
+    this->length++;
+
+    return newItem;
 }
+
 
 #endif //LORA_LIST_H
