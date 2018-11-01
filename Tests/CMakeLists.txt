@@ -8,5 +8,6 @@ add_library(test_target ${SRC_PATH}/List.h ${SRC_PATH}/List.cpp ${SRC_PATH}/Send
 
 include_directories(${SRC_PATH})
 
-add_executable(catch_test catch.hpp tests-linkedList.cpp tests-sendqueue.cpp tests-maccommand.cpp tests-main.cpp)
+add_executable(catch_test catch.hpp tests-linkedList.cpp tests-sendqueue.cpp tests-maccommand.cpp tests-framer.cpp tests-main.cpp)
+
 target_link_libraries(catch_test test_target)
