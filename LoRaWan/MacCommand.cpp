@@ -72,18 +72,18 @@ typedef enum eLoRaMacSrvCmd {
 } LoRaMacSrvCmd;
 
 LoRaMacCommandStatus MacCommandsContext::serialize(size_t availableSize, uint8_t *buffer) {
-    List<MacCommand>::iterator iter = this->macCommandsList.Begin();
+    List<MacCommand>::Iterator iter = this->macCommandsList.Begin();
 
     uint8_t bytesWrote = 0;
 
     while (iter != this->macCommandsList.End()) {
-        MacCommand *currentCommand = iter.Data();
+        MacCommand currentCommand = *iter;
 
-        if ((availableSize - bytesWrote) >= (CID_FIELD_SIZE + currentCommand->PayloadSize)) {
-            buffer[bytesWrote++] = currentCommand->CommandID;
-            memcpy(&buffer[bytesWrote], currentCommand->Payload, currentCommand->PayloadSize);
+        if ((availableSize - bytesWrote) >= (CID_FIELD_SIZE + currentCommand.PayloadSize)) {
+            buffer[bytesWrote++] = currentCommand.CommandID;
+            memcpy(&buffer[bytesWrote], currentCommand.Payload, currentCommand.PayloadSize);
 
-            bytesWrote += currentCommand->PayloadSize;
+            bytesWrote += currentCommand.PayloadSize;
         } else {
             break;
         }
@@ -97,7 +97,8 @@ LoRaMacCommandStatus MacCommandsContext::AddCommand(uint8_t commandID, uint8_t *
 
     MacCommand newCommand = MacCommand(commandID, payload, payloadSize);
 
-    this->macCommandsList.Add(&newCommand);
+    List<MacCommand>::Iterator iter = this->macCommandsList.End();
+    this->macCommandsList.Insert(iter, newCommand);
 
     this->serializedCommandsSize += (CID_FIELD_SIZE + payloadSize);
 
@@ -108,7 +109,15 @@ LoRaMacCommandStatus MacCommandsContext::RemoveCommand(MacCommand *macCommand) {
 
     size_t payloadSize = macCommand->PayloadSize;
 
-    this->macCommandsList.Remove(macCommand);
+    List<MacCommand>::Iterator iter = this->macCommandsList.Begin();
+
+    while(iter != this->macCommandsList.End()) {
+        if (*iter == *macCommand) {
+            iter = this->macCommandsList.Erase(iter);
+        } else {
+            iter++;
+        }
+    }
 
     this->serializedCommandsSize -= (CID_FIELD_SIZE + payloadSize);
 
@@ -141,6 +150,8 @@ bool MacCommandsContext::InsertToFrame(
     } else {
         // TODO: serialize available commands and skip for exceeding space
     }
+
+    return true;
 }
 
 /* TODO: Processing Mac Commands */
