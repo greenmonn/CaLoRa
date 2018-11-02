@@ -6,6 +6,7 @@
  * Framer:
  * 	- responsible for header creation and parsing
  */
+
 //Max Payload M = 230
 //Max Payload N = 222
 //repeater compatible
@@ -20,7 +21,7 @@
 #define FRAMER_FHDR_FIELD_SIZE      23
 #define FRAMER_MIC_FIELD_SIZE       4
 #define FRAMER_FPort_FIELD_SIZE     1
-#define FRAMER_FIELD_SIZE           29
+#define FRAMER_FIELD_SIZE           25
 #define FRAMER_DevAddr_FIELD_SIZE   4 
 #define FRAMER_FCnt_FIELD_SIZE      2
 #define FRAMER_FCtrl_FIELD_SIZE     1
@@ -53,7 +54,7 @@ typedef union //8bits
     }Bits;
 }LoraMacFCtrl;
 
-typedef union  FrameHeader{
+typedef struct  FrameHeader{
     uint32_t DevAddr;
     LoraMacFCtrl FCtrl;
     uint16_t FCnt;
@@ -81,41 +82,4 @@ public:
     uint32_t MakeMIC(uint8_t* pPacket);
     bool checkMIC(uint8_t* pPacket,uint8_t Packet_length);
 };
-
-
-/*!
- * MType
- */
-typedef enum eLoRaMacFrameType
-{
-    /*!
-     * LoRaMAC join request frame
-     */
-            FRAME_TYPE_JOIN_REQ              = 0x00,
-    /*!
-     * LoRaMAC join accept frame
-     */
-            FRAME_TYPE_JOIN_ACCEPT           = 0x01,
-    /*!
-     * LoRaMAC unconfirmed up-link frame
-     */
-            FRAME_TYPE_DATA_UNCONFIRMED_UP   = 0x02,
-    /*!
-     * LoRaMAC unconfirmed down-link frame
-     */
-            FRAME_TYPE_DATA_UNCONFIRMED_DOWN = 0x03,
-    /*!
-     * LoRaMAC confirmed up-link frame
-     */
-            FRAME_TYPE_DATA_CONFIRMED_UP     = 0x04,
-    /*!
-     * LoRaMAC confirmed down-link frame
-     */
-            FRAME_TYPE_DATA_CONFIRMED_DOWN   = 0x05,
-    /*!
-     * LoRaMAC proprietary frame
-     */
-            FRAME_TYPE_PROPRIETARY           = 0x07,
-}LoRaMacFrameType_t;
-
 #endif //LORA_FRAMER_H

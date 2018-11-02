@@ -57,7 +57,6 @@ private:
 
 		/* LoRaWan packet variables */
 		uint8_t packetBuffer[MAX_PHY_PAYLOAD];
-		uint8_t FRMPayLoad[MAX_FRM_PAYLOAD];
 		uint8_t length;
 		LoraMacHeader MHDR;
         FrameHeader  FHDR;

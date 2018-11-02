@@ -1,13 +1,18 @@
 #include <string.h>
 #include "Framer.h"
-#include <iostream>
+
+
 //pPacket size : 250
 //|-------------------------------------------------------------------|
-//|  MHDR | DevAddr | Fcnt | CFtrl | FOpts | FPort | FRMPayload | MIC |
-//|   1   |    4    |  2   |   1   |   16  |   1   |      N     |  4  |
+//|  MHDR | DevAddr | CFtrl | Fcnt | FOpts | FPort | FRMPayload | MIC |
+//|   1   |    4    |   1   |   2  |   16  |   1   |      N     |  4  |
 //|-------------------------------------------------------------------|
-
-using namespace std;
+//
+//static void printPacketBuffer(uint8_t *packet, int len){
+//    for(int i =0 ; i<len; i++)
+//        cout<< hex << packet[i] << " ";
+//    cout<<endl;
+//}
 
 bool Framer::create(uint8_t *pPacket, LoraMacHeader *MHDR,FrameHeader *FHDR,
                     uint8_t *FPort,uint8_t *length) {
@@ -16,19 +21,18 @@ bool Framer::create(uint8_t *pPacket, LoraMacHeader *MHDR,FrameHeader *FHDR,
     memmove(pPacket+FRAMER_FIELD_SIZE,pPacket,*length);
 
     *buffer=MHDR->Value;
-    buffer+=FRAMER_MHDR_FIELD_SIZE;
+    buffer = buffer + FRAMER_MHDR_FIELD_SIZE;
 
     *((uint32_t*)buffer)=FHDR->DevAddr;
-    buffer += FRAMER_DevAddr_FIELD_SIZE;
+    buffer = buffer + FRAMER_DevAddr_FIELD_SIZE;
 
-    cout<<"FHDR->Ftrl.Value = "<<(unsigned)FHDR->FCtrl.Value<<endl;
     *buffer=FHDR->FCtrl.Value;
-    buffer+=FRAMER_FCtrl_FIELD_SIZE;
+    buffer = buffer + FRAMER_FCtrl_FIELD_SIZE;
 
     *((uint16_t*)buffer)=FHDR->FCnt;
-    buffer+=FRAMER_FCnt_FIELD_SIZE;
+    buffer = buffer + FRAMER_FCnt_FIELD_SIZE;
 
-    memcpy(buffer,FHDR->FOpts,sizeof(uint8_t)*FRAMER_FOpts_FIELD_SIZE);
+    memcpy(buffer,FHDR->FOpts,FRAMER_FOpts_FIELD_SIZE);
     buffer+=FRAMER_FOpts_FIELD_SIZE;
 
     *buffer=*FPort;
@@ -48,7 +52,6 @@ bool Framer::parse(uint8_t *pPacket , LoraMacHeader *MHDR,FrameHeader *FHDR,
 
     FHDR->DevAddr=*((uint32_t*)buffer);
     buffer += FRAMER_DevAddr_FIELD_SIZE;
-
     FHDR->FCtrl.Value=*buffer;
     buffer +=FRAMER_FCtrl_FIELD_SIZE;
 
@@ -73,3 +76,4 @@ uint32_t Framer::MakeMIC(uint8_t *pPacket) {
 bool Framer::checkMIC(uint8_t *pPacket,uint8_t Packet_length){
     return true;
 }
+
