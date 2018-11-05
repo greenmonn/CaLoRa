@@ -5,7 +5,7 @@ set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/cmake/ArduinoToolchain.cmake)
 set(PROJECT_NAME LoRa)
 project(${PROJECT_NAME})
 
-set(LORAWAN_PATH ${CMAKE_SOURCE_DIR}/LoRaWan)
+set(LORAWAN_PATH ${CMAKE_SOURCE_DIR}/CaLoRa)
 
 #===========================================#
 #  generate RadioHead Lib                   #
@@ -17,12 +17,12 @@ file(GLOB RH_SRCS ${RH_PATH}/*.cpp)
 generate_arduino_library(RadioHead SRCS ${RH_SRCS} HDRS ${RH_HDRS})
 
 #===========================================#
-#  generate LoRaWan Lib                     #
+#  generate CaLoRa Lib                      #
 #===========================================#
 include_directories(${LORAWAN_PATH})
 file(GLOB LORAWAN_HDRS ${LORAWAN_PATH}/*.h)
 file(GLOB LORAWAN_SRCS ${LORAWAN_PATH}/*.cpp)
-generate_arduino_library(LoRaWan SRCS ${LORAWAN_SRCS} HDRS ${RH_HDRS} LIBS RadioHead)
+generate_arduino_library(CaLoRa SRCS ${LORAWAN_SRCS} HDRS ${RH_HDRS} LIBS RadioHead)
 
 #===========================================#
 #  generate arduino firmware                #
@@ -40,4 +40,4 @@ set(${CMAKE_PROJECT_NAME}_PORT ${ARD_PORT})
 # set(mega.build.mcu atmega2560)
 # set(mega.upload.protocol wiring)
 # set(mega.upload.speed 115200)
-generate_arduino_firmware(${CMAKE_PROJECT_NAME} LIBS LoRaWan)
+generate_arduino_firmware(${CMAKE_PROJECT_NAME} LIBS CaLoRa)
