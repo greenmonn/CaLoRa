@@ -29,7 +29,7 @@
 
 
 //  MHDR | FHDR | FPort | FRMPayload | MIC
-// LoraMacHeader | LoRaMacFCtrl | FPort | Packet | MIC
+//LoraMacHeader | LoRaMacFCtrl | FPort | Packet | MIC
 
 typedef union //8bits
 {
@@ -82,4 +82,5 @@ public:
     uint32_t MakeMIC(uint8_t* pPacket);
     bool checkMIC(uint8_t* pPacket,uint8_t Packet_length);
 };
+
 #endif //LORA_FRAMER_H

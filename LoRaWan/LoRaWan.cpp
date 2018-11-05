@@ -43,7 +43,8 @@ void LoRaWan::oneLoop() {
 			if (sendQueue.pop(packetBuffer, &length)) {
 
 				// TODO: properly set lora header
-
+                packetBuffer[0]=0x0A0B0C0D;
+                length=100;
 				framer.create(packetBuffer, &MHDR,&FHDR,&FPort,&length);
 				radioDriver.send(packetBuffer, length);
 				transmitting = true;
