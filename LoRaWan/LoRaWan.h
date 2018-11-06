@@ -15,9 +15,9 @@
  * 	- LoRaWan(mac layer) singleton implementation
  */
 
-#define FREQUENCY							868.0
-#define MAX_PHY_PAYLOAD 			247
-
+#define FREQUENCY					868.0
+#define MAX_PHY_PAYLOAD             247
+#define MAX_FRM_PAYLOAD             239
 
 /*
  *		CLASS A:
@@ -58,8 +58,10 @@ private:
 		/* LoRaWan packet variables */
 		uint8_t packetBuffer[MAX_PHY_PAYLOAD];
 		uint8_t length;
-		LoRaHeader loRaHeader;
-
+		LoraMacHeader MHDR;
+        FrameHeader  FHDR;
+		uint8_t FPort;
+		
 		/* LoRaWan state variable */
 		bool transmitting;
 
