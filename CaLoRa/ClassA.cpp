@@ -1,6 +1,5 @@
 #include "ClassA.h"
 
-
 void ClassA::oneLoop() {
 
 	uint8_t length;
@@ -16,6 +15,8 @@ void ClassA::oneLoop() {
 				// framer.create(packetBuffer, &length, loRaHeader);
 				radioDriver.send(packetBuffer, length);
 				lorawanStatus = LORAWAN_TX;
+				Logger::print("Class A Tx started: ");
+				Logger::printHex(packetBuffer, length);
 			}
 			break;
 
@@ -25,6 +26,7 @@ void ClassA::oneLoop() {
 			if (lorawanStatus == LORAWAN_TX) {
 
 				lorawanStatus = LORAWAN_IDLE;
+				Logger::println("Class A Tx finished");
 
 				// schedule first, second receive window
 				timer.schedule(RECEIVE_DELAY1, beginReceiveWindow1);
@@ -39,6 +41,9 @@ void ClassA::oneLoop() {
 			// get received packet
 			if (radioDriver.available()) {
 				if (radioDriver.recv(packetBuffer, &length)) {
+
+					Logger::print("Class A Rx: ");
+					Logger::printHex(packetBuffer, length);
 
 					// TODO: process received header
 					// loRaHeader = framer.parse(packetBuffer, &length);

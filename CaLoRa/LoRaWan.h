@@ -5,6 +5,7 @@
 #include "SendQueue.h"
 #include "Framer.h"
 #include "Timer.h"
+#include "Logger.h"
 
 
 typedef void(*recv_callback_t)(uint8_t *, int);
