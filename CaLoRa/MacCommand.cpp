@@ -3,74 +3,6 @@
 
 #define CID_FIELD_SIZE  1
 
-/*!
- * LoRaMAC server MAC commands
- *
- * LoRaWAN Specification V1.1.0 chapter 5, table 4
- */
-typedef enum eLoRaMacSrvCmd {
-    /*!
-     * ResetInd
-     */
-            SRV_MAC_RESET_CONF = 0x01,
-    /*!
-     * LinkCheckAns
-     */
-            SRV_MAC_LINK_CHECK_ANS = 0x02,
-    /*!
-     * LinkADRReq
-     */
-            SRV_MAC_LINK_ADR_REQ = 0x03,
-    /*!
-     * DutyCycleReq
-     */
-            SRV_MAC_DUTY_CYCLE_REQ = 0x04,
-    /*!
-     * RXParamSetupReq
-     */
-            SRV_MAC_RX_PARAM_SETUP_REQ = 0x05,
-    /*!
-     * DevStatusReq
-     */
-            SRV_MAC_DEV_STATUS_REQ = 0x06,
-    /*!
-     * NewChannelReq
-     */
-            SRV_MAC_NEW_CHANNEL_REQ = 0x07,
-    /*!
-     * RXTimingSetupReq
-     */
-            SRV_MAC_RX_TIMING_SETUP_REQ = 0x08,
-    /*!
-     * NewChannelReq
-     */
-            SRV_MAC_TX_PARAM_SETUP_REQ = 0x09,
-    /*!
-     * DlChannelReq
-     */
-            SRV_MAC_DL_CHANNEL_REQ = 0x0A,
-    /*!
-     * DeviceTimeAns
-     */
-            SRV_MAC_DEVICE_TIME_ANS = 0x0D,
-    /*!
-     * PingSlotInfoAns
-     */
-            SRV_MAC_PING_SLOT_INFO_ANS = 0x10,
-    /*!
-     * PingSlotChannelReq
-     */
-            SRV_MAC_PING_SLOT_CHANNEL_REQ = 0x11,
-    /*!
-     * BeaconTimingAns
-     */
-            SRV_MAC_BEACON_TIMING_ANS = 0x12,
-    /*!
-     * BeaconFreqReq
-     */
-            SRV_MAC_BEACON_FREQ_REQ = 0x13,
-} LoRaMacSrvCmd;
-
 LoRaMacCommandStatus MacCommandsContext::serialize(uint8_t availableSize, uint8_t *buffer) {
     List<MacCommand>::Iterator iter = this->macCommandsList.Begin();
 
@@ -84,6 +16,8 @@ LoRaMacCommandStatus MacCommandsContext::serialize(uint8_t availableSize, uint8_
             memcpy(&buffer[bytesWrote], currentCommand.Payload, currentCommand.PayloadSize);
 
             bytesWrote += currentCommand.PayloadSize;
+
+            RemoveCommand()
         } else {
             break;
         }
