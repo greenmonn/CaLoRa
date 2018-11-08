@@ -1,11 +1,6 @@
 #ifndef LORA_CLASSA_H
 #define LORA_CLASSA_H
 
-#include <SPI.h>
-
-#include "SendQueue.h"
-#include "Framer.h"
-#include "Timer.h"
 #include "LoRaWan.h"
 
 
