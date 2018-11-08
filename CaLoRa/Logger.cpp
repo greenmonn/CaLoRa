@@ -27,7 +27,7 @@ void Logger::printHex(const uint8_t i) {
 
 	if(Serial){
 		Serial.print("0x");
-		Serial.print(hexmap[(i & 0xF0) >> 4]);
+		Serial.print(hexmap[i >> 4]);
 		Serial.print(hexmap[i & 0x0F]);
 	}
 }
