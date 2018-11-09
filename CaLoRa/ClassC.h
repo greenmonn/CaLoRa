@@ -34,7 +34,6 @@ private:
 		static void beginReceiveWindow1();
 		static void endReceiveWindow1();
 		static void beginReceiveWindow2();
-		static void endReceiveWindow2();
 
 public:
 		explicit ClassC(recv_callback_t): LoRaWan(recvCallback) {};

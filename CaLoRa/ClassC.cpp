@@ -11,7 +11,7 @@ void ClassC::oneLoop() {
 			break;
 
 		case RHGenericDriver::RHModeIdle:
-
+/*
 			// tx -> idle, which means transmission is finished
 			if (lorawanStatus == LORAWAN_TX) {
 
@@ -20,13 +20,23 @@ void ClassC::oneLoop() {
 				// schedule first, second receive window
 				timer.schedule(RECEIVE_DELAY1, beginReceiveWindow1);
 				timer.schedule(RECEIVE_DELAY2, beginReceiveWindow2);
-			}
+			}*/
 			break;
 
 		case RHGenericDriver::RHModeTx:
 			break;
 
 		case RHGenericDriver::RHModeRx:
+
+			// tx -> rx, which means transmission is finished
+			if(lorawanStatus == LORAWAN_TX) {
+
+				lorawanStatus = LORAWAN_RX;
+
+				timer.schedule(RECEIVE_DELAY1, beginReceiveWindow1);
+				timer.schedule(RECEIVE_DELAY2, beginReceiveWindow2);
+			}
+
 			// get received packet
 			if (radioDriver.available()) {
 				if (radioDriver.recv(packetBuffer, &length)) {
@@ -66,9 +76,9 @@ void ClassC::beginReceiveWindow1() {
 
 void ClassC::endReceiveWindow1() {
 
-	// close receive window go back to idle
-	radioDriver.setModeIdle();
-	lorawanStatus = LORAWAN_IDLE;
+	// close receive window go back to RX
+	radioDriver.setModeRx();
+	lorawanStatus = LORAWAN_RX;
 }
 
 void ClassC::beginReceiveWindow2() {
