@@ -13,26 +13,28 @@
  *		CLASS C:
  *
  *                              |<-   DELAY1  ->|
- *                              |<-           DELAY2            ->|
+ *                              |<-        DELAY2       ->|
  *
- *    ------------+-------------+---------------+---------+-------+-------------------------
- *                |             |               |         |       |
- *         RX2    |      TX     |               |   RX1   |       |           RX2
- *                |             |               |         |       |
- *    ------------+-------------+---------------+---------+-------+-------------------------
+ *    ------------+-------------+---------------+---------+--------------------------------
+ *                |             |               |         |
+ *         RX2    |      TX     |       RX2     |   RX1   |               RX2
+ *                |             |               |         |
+ *    ------------+-------------+---------------+---------+--------------------------------
  *
- *       receive  |  transmit   |      idle     | receive | idle  |  receive (continuously)
+ *       receive  |  transmit   |         receive         |      receive (continuously)
  */
 
 #define RECEIVE_DELAY1				20
 #define RECEIVE_DELAY2				100
 #define RECEIVE_DURATION			20
 
+#define RX1_FREQUENCY 				1
+#define RX2_FREQUENCY				2
+
 class ClassC: public LoRaWan {
 
 private:
 		static void beginReceiveWindow1();
-		static void endReceiveWindow1();
 		static void beginReceiveWindow2();
 
 public:
