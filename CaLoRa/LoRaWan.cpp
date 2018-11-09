@@ -23,6 +23,10 @@ bool LoRaWan::init() {
 	radioDriver.setSignalBandwidth(125000);
 	radioDriver.setCodingRate4(5);
 
+	// lora wan starts with idle radio and inactive status
+	radioDriver.setModeIdle();
+	lorawanStatus = LORAWAN_INACTIVE;
+
 	return true;
 }
 

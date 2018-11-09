@@ -19,7 +19,14 @@ typedef void(*recv_callback_t)(uint8_t *, int);
 #define MAX_PHY_PAYLOAD        247
 
 typedef RH_RF95 RadioDriver;
-typedef enum {LORAWAN_TX, LORAWAN_RX, LORAWAN_IDLE, LORAWAN_SLEEP} lorawan_status_t;
+typedef enum {
+		LORAWAN_INACTIVE,
+		LORAWAN_ACTIVATING,
+		LORAWAN_IDLE,
+		LORAWAN_TX,
+		LORAWAN_RX,
+		LORAWAN_SLEEP
+} lorawan_status_t;
 
 class LoRaWan {
 
@@ -37,6 +44,8 @@ protected:
 
 		/* LoRaWan Status */
 		static lorawan_status_t lorawanStatus;
+		static uint32_t devAddr;
+		static uint
 
 		int getNextDataRate() { return 0; }                          // ADR(adaptive data rate). get next data rate from existing radio state
 

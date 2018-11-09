@@ -22,6 +22,11 @@ void ClassA::oneLoop() {
 
 		case RHGenericDriver::RHModeIdle:
 
+			// node just woke up
+			if (lorawanStatus == LORAWAN_INACTIVE) {
+
+			}
+
 			// tx -> idle, which means transmission is finished
 			if (lorawanStatus == LORAWAN_TX) {
 
