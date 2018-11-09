@@ -26,10 +26,10 @@
 
 #define RECEIVE_DELAY1				20
 #define RECEIVE_DELAY2				100
-#define RECEIVE_DURATION			20
+#define RECEIVE_DURATION            80
 
-#define RX1_FREQUENCY 				1
-#define RX2_FREQUENCY				2
+#define RX1_FREQUENCY               1
+#define RX2_FREQUENCY               2
 
 class ClassC: public LoRaWan {
 
