@@ -3,15 +3,10 @@
 
 //pPacket size : 250
 //|-------------------------------------------------------------------|
-//|  MHDR | DevAddr | CFtrl | Fcnt | FOpts | FPort | FRMPayload | MIC |
-//|   1   |    4    |   1   |   2  |   16  |   1   |      N     |  4  |
+//|  MHDR | DevAddr | FCtrl | Fcnt | FOpts | FPort | FRMPayload | MIC |
+//|   1   |    4    |   1   |   2  |   15  |   1   |      N     |  4  |
 //|-------------------------------------------------------------------|
-//
-//static void printPacketBuffer(uint8_t *packet, int len){
-//    for(int i =0 ; i<len; i++)
-//        cout<< hex << packet[i] << " ";
-//    cout<<endl;
-//}
+
 
 bool Framer::create(uint8_t *pPacket, LoraMacHeader *MHDR, FrameHeader *FHDR,
                     uint8_t *FPort, uint8_t *Packet_length) {
@@ -31,6 +26,9 @@ bool Framer::create(uint8_t *pPacket, LoraMacHeader *MHDR, FrameHeader *FHDR,
     *((uint16_t *) buffer) = FHDR->FCnt;
     buffer = buffer + FRAMER_FCnt_FIELD_SIZE;
 
+    memcpy(buffer, FHDR->FOpts, FHDR->FCtrl.Bits.FOptsLen);
+    buffer += FHDR->FCtrl.Bits.FOptsLen;
+
     *buffer = *FPort;
     *Packet_length += FRAMER_FIELD_NoFOpts_SIZE + FHDR->FCtrl.Bits.FOptsLen + FRAMER_MIC_FIELD_SIZE;
     return true;
@@ -44,8 +42,6 @@ bool Framer::parse(uint8_t *pPacket, LoraMacHeader *MHDR, FrameHeader *FHDR,
 
     MHDR->Value = *buffer;
     buffer += FRAMER_MHDR_FIELD_SIZE;
-//    memcpy(FHDR, buffer, FRAMER_FHDR_FIELD_SIZE);
-//    buffer += FRAMER_FHDR_FIELD_SIZE;
 
     FHDR->DevAddr = *((uint32_t *) buffer);
     buffer += FRAMER_DevAddr_FIELD_SIZE;
@@ -87,19 +83,21 @@ bool Framer::createDataFrame(
 
     LoraMacHeader mhdr;
     FrameHeader fhdr;
-
+    uint8_t fopts_out[LORA_MAC_COMMAND_MAX_FOPTS_LENGTH];
+    uint8_t foptlen;
     mhdr.bits.MType = mType;
     mhdr.bits.RUF = 0;
     mhdr.bits.Major = MAJOR_VERSION;
     fhdr.DevAddr = *addr;
 
-    if (ACK) fhdr.FCtrl.Bits.Ack = 1;
-    else fhdr.FCtrl.Bits.Ack = 0;
+    fhdr.FCtrl.Bits.Ack = ACK ? 1 : 0;
     fhdr.FCtrl.Bits.ADR = 0;
-    fhdr.FOpts = packet + (FRAMER_MHDR_FIELD_SIZE + FRAMER_FPort_FIELD_SIZE + FRAMER_DevAddr_FIELD_SIZE +
-                           FRAMER_FCnt_FIELD_SIZE + FRAMER_FCtrl_FIELD_SIZE);
-    fhdr.FCtrl.Bits.FOptsLen = 0; //from maccommand.cpp
-//    fhdr.FOpts; // from maccommand.cpp
+
+    fhdr.FOpts = fopts_out;
+
+    macCmd.InsertToFrame(fopts_out, &foptlen);
+
+    fhdr.FCtrl.Bits.FOptsLen = foptlen;
 
     fhdr.FCtrl.Bits.ADRACKReq = 0;
     fhdr.FCtrl.Bits.ClassB = 0;

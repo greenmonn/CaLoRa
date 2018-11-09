@@ -27,7 +27,7 @@
 #define FRAMER_FCtrl_FIELD_SIZE         1
 #define FRAMER_FIELD_NoFOpts_SIZE       9
 
-#define MAJOR_VERSION 0x00
+#define MAJOR_VERSION                   0x00
 
 //  MHDR | FHDR | FPort | FRMPayload | MIC
 //LoraMacHeader | LoRaMacFCtrl | FPort | Packet | MIC
