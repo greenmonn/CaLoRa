@@ -114,12 +114,6 @@ bool Framer::createDataFrame(
     fhdr.FOpts = fopts_out;
 
     macCmd.InsertToFrame(fopts_out, &foptlen);
-//    foptlen=5;
-//    fopts_out[0]=1;
-//    fopts_out[1]=2;
-//    fopts_out[2]=3;
-//    fopts_out[3]=4;
-//    fopts_out[4]=5;
 
     fhdr.FCtrl.Bits.FOptsLen = foptlen;
 

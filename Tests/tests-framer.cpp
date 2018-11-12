@@ -2,33 +2,12 @@
 #include "catch.hpp"
 #include "Framer.h"
 
-#include <iostream>
-
-using namespace std;
 //pPacket size : 250
 //|-------------------------------------------------------------------|
 //|  MHDR | DevAddr | FCtrl | Fcnt | FOpts | FPort | FRMPayload | MIC |
 //|   1   |    4    |   1   |   2  |   15  |   1   |      N     |  4  |
 //|-------------------------------------------------------------------|
 
-void printHex(const uint8_t i) {
-
-    const char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7',
-                           '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-
-    cout << "0x";
-    cout << hexmap[i >> 4];
-    cout << hexmap[i & 0x0F];
-}
-
-void printHex(const uint8_t *p, const int length) {
-    for (int i = 0; i < length; i++) {
-        printHex(p[i]);
-        cout << "  ";
-    }
-    cout << endl;
-
-}
 
 TEST_CASE("Create", "[Framer]") {
     Framer framer;
@@ -44,7 +23,6 @@ TEST_CASE("Create", "[Framer]") {
 
     framer.createDataFrame(packetBuffer, FRAMER_Join_Accept, &addr, &port, &fcnt, ack, &length);
 
-    printHex(packetBuffer, length);
 
     LoraMacHeader MHDR_t;
     FrameHeader FHDR_t;
