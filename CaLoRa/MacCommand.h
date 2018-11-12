@@ -73,6 +73,9 @@ class MacCommandsContext {
 
 
 public:
+
+    MacCommandsContext():serializedCommandsSize(0){};
+
     LoRaMacCommandStatus AddCommand(uint8_t commandID, uint8_t *payload, uint8_t payloadSize);
 
     LoRaMacCommandStatus RemoveCommand(MacCommand *macCommand);

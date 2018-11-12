@@ -1,6 +1,5 @@
 #include <string.h>
 #include "Framer.h"
-
 //pPacket size : 250
 //|-------------------------------------------------------------------|
 //|  MHDR | DevAddr | FCtrl | Fcnt | FOpts | FPort | FRMPayload | MIC |
@@ -30,13 +29,20 @@ bool Framer::create(uint8_t *pPacket, LoraMacHeader *MHDR, FrameHeader *FHDR,
     buffer += FHDR->FCtrl.Bits.FOptsLen;
 
     *buffer = *FPort;
-    *Packet_length += FRAMER_FIELD_NoFOpts_SIZE + FHDR->FCtrl.Bits.FOptsLen + FRAMER_MIC_FIELD_SIZE;
+    buffer = buffer + FRAMER_FPort_FIELD_SIZE;
+
+    //add FRMPayload length;
+    buffer = buffer + *Packet_length;
+
+    *Packet_length += FRAMER_FIELD_NoFOpts_SIZE + FHDR->FCtrl.Bits.FOptsLen;
+
+    MakeMIC(buffer, Packet_length);
+
     return true;
 }
 
 bool Framer::parse(uint8_t *pPacket, LoraMacHeader *MHDR, FrameHeader *FHDR,
                    uint8_t *FPort, uint8_t *Packet_length) {
-
     checkMIC(pPacket, *Packet_length);
     uint8_t *buffer = pPacket;
 
@@ -45,27 +51,39 @@ bool Framer::parse(uint8_t *pPacket, LoraMacHeader *MHDR, FrameHeader *FHDR,
 
     FHDR->DevAddr = *((uint32_t *) buffer);
     buffer += FRAMER_DevAddr_FIELD_SIZE;
+
     FHDR->FCtrl.Value = *buffer;
     buffer += FRAMER_FCtrl_FIELD_SIZE;
 
     FHDR->FCnt = *((uint16_t *) buffer);
     buffer += FRAMER_FCnt_FIELD_SIZE;
 
-    memcpy(FHDR->FOpts, buffer, FHDR->FCtrl.Bits.FOptsLen);
+
+    memcpy(this->Fopts_temp, buffer, FHDR->FCtrl.Bits.FOptsLen);
+    FHDR->FOpts=this->Fopts_temp;
+
     buffer += FHDR->FCtrl.Bits.FOptsLen;
 
     *FPort = *buffer;
 
-    *Packet_length -= FRAMER_FIELD_NoFOpts_SIZE + FRAMER_MIC_FIELD_SIZE + FHDR->FCtrl.Bits.FOptsLen;
-    memmove(pPacket, pPacket + FRAMER_FIELD_SIZE, *Packet_length);
+    memmove(pPacket, pPacket + FRAMER_FIELD_NoFOpts_SIZE + FHDR->FCtrl.Bits.FOptsLen, *Packet_length);
+
+
+    *Packet_length -= FRAMER_FIELD_NoFOpts_SIZE + FHDR->FCtrl.Bits.FOptsLen + FRAMER_MIC_FIELD_SIZE;
 
     return true;
 }
 
 // TODO: MAKE MIC
 
-uint32_t Framer::MakeMIC(uint8_t *pPacket) {
-    return 0;
+bool Framer::MakeMIC(uint8_t *pPacket_Buffer, uint8_t *Packet_length) {
+    *(pPacket_Buffer++) = 1;
+    *(pPacket_Buffer++) = 2;
+    *(pPacket_Buffer++) = 3;
+    *(pPacket_Buffer++) = 4;
+    *Packet_length += FRAMER_MIC_FIELD_SIZE;
+
+    return true;
 }
 
 bool Framer::checkMIC(uint8_t *pPacket, uint8_t Packet_length) {
@@ -96,6 +114,12 @@ bool Framer::createDataFrame(
     fhdr.FOpts = fopts_out;
 
     macCmd.InsertToFrame(fopts_out, &foptlen);
+//    foptlen=5;
+//    fopts_out[0]=1;
+//    fopts_out[1]=2;
+//    fopts_out[2]=3;
+//    fopts_out[3]=4;
+//    fopts_out[4]=5;
 
     fhdr.FCtrl.Bits.FOptsLen = foptlen;
 

@@ -78,7 +78,7 @@
  */
 
 /* FOpts in FHDR
- * 16 Bytes
+ * 15 Bytes
  *
  *
  */
@@ -167,12 +167,14 @@ public:
 private:
 
     MacCommandsContext macCmd;
+    uint8_t Fopts_temp[15];
 
     bool create(uint8_t *pPacket, LoraMacHeader *MHDR, FrameHeader *FHDR, uint8_t *FPort,
                 uint8_t *Packet_length);
 
     // parse lora headers fields for incoming packet
-    uint32_t MakeMIC(uint8_t *pPacket);
+    bool MakeMIC(uint8_t *pPacket_Buffer,uint8_t *Packet_length) ;
+
 
     bool checkMIC(uint8_t *pPacket, uint8_t Packet_length);
 
