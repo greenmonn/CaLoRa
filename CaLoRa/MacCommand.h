@@ -8,6 +8,8 @@
 
 #include "List.h"
 
+#define CID_FIELD_SIZE  1
+
 #define LORAMAC_COMMADS_MAX_NUM_OF_PARAMS   2
 
 /*
@@ -45,6 +47,31 @@ typedef enum enumLoRaMacCommandsStatus {
             LORAMAC_COMMANDS_ERROR_UNDEFINED,
 } LoRaMacCommandStatus;
 
+/*!
+ * LoRaMAC server MAC commands
+ *
+ * LoRaWAN Specification V1.1.0 chapter 5, table 4
+ */
+typedef enum eLoRaMacCommand {
+    /*!
+     * LinkCheckReq
+     */
+            MAC_LINK_CHECK_REQ = 0x01,
+    /*!
+     * LinkCheckAns
+     */
+            MAC_LINK_CHECK_ANS = 0x02,
+    /*!
+     * DevStatusReq
+     */
+            MAC_DEV_STATUS_REQ = 0x03,
+    /*!
+    * DevStatusAns
+    */
+            MAC_DEV_STATUS_ANS = 0x04,
+
+} LoRaMacCommand;
+
 class MacCommand {
 public:
     MacCommand(uint8_t commandID, uint8_t *payload, uint8_t payloadSize) {
@@ -73,12 +100,13 @@ class MacCommandsContext {
 
 
 public:
-
     MacCommandsContext():serializedCommandsSize(0){};
 
     LoRaMacCommandStatus AddCommand(uint8_t commandID, uint8_t *payload, uint8_t payloadSize);
 
-    LoRaMacCommandStatus RemoveCommand(MacCommand *macCommand);
+    const size_t GetSerializedCommandsSize();
+
+    LoRaMacCommandStatus AddCommand(uint8_t commandID, uint8_t *payload, size_t payloadSize);
 
     bool InsertToFrame(uint8_t *fOpts, uint8_t *fOptsLen);
 };
